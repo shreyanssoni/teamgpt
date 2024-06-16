@@ -21,7 +21,10 @@ const SignupPage: React.FC = () => {
                 password: password
             }
             
-            await axios.post("api/users/signup", userdetails);    
+            await axios.post("api/users/signup", userdetails);  
+            await axios.post('/api/jobs/startemailjob', {
+              email: email
+            })  
             toast.success("Successfully Signed Up!");
             router.push('login');
             

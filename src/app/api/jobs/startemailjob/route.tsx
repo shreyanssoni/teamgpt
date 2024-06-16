@@ -1,23 +1,29 @@
 import { Client } from "@upstash/qstash";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
+  try{
+    const qstashClient = new Client({ token: process.env.QSTASH_TOKEN!});
+    const body = await request.json();
+    const email = body.email; 
+    const rootDomain = request.url.split('/').slice(0, 3).join('/');
+    console.log(rootDomain); 
+    const emailAPIURL = `${process.env.DOMAIN}/api/jobs/sendemail`; 
   
-  const qstashClient = new Client({ token: process.env.QSTASH_TOKEN || ''});
-  const body = await request.json();
-  const users = body.users;
-  const emailtype = body.emailtype; 
-  // If you know the public URL of the email API, you can use it directly
-  const emailAPIURL = `${process.env.DOMAIN}/api/jobs/sendemail`; // ie: https://yourapp.com/api/send-email
-
-  // Tell QStash to start the background job.
-  // For proper error handling, refer to the quick start.
-  await qstashClient.publishJSON({
-    url: emailAPIURL,
-    body: {
-      users, emailtype
-    }
-  });
-
-  return new Response("Job started", { status: 200 });
+    // Tell QStash to start the background job.
+    // For proper error handling, refer to the quick start.
+    await qstashClient.publishJSON({
+      url: emailAPIURL,
+      body: {
+        email
+      }
+    });
+  
+    return NextResponse.json({message: "Job started"}, { status: 200 });
+  } catch (error:any) {
+    console.error(error);
+    return NextResponse.json({error: error.message}, { status: 200 });
+  }
+  
 }
 

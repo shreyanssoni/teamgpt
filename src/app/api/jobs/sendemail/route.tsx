@@ -6,32 +6,31 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest){
     const { email, emailType } :any = await request.json(); 
+    console.log("trying to mail" , email, emailType);
     try {
-        const hashedToken = await bcryptjs.hash(email.toString(), 10);
-        if(emailType == 'VERIFY'){
-            const expiryDate = new Date();
-            expiryDate.setHours(expiryDate.getHours() + 1);
-            await updateUsertoken(hashedToken, email, expiryDate); 
-        }
+        const hashedToken = await bcryptjs.hash(email, 10);
+        const expiryDate = new Date();
+        expiryDate.setHours(expiryDate.getHours() + 1);
+        await updateUsertoken(hashedToken, email, expiryDate); 
 
         var transport = nodemailer.createTransport({
-            host: "sandbox.smtp.mailtrap.io",
-            port: 2525,
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
-                user: process.env.NODEMAILER_USER,
-                pass: process.env.NODEMAILER_PASS
+              user: process.env.NEXT_EMAIL,
+              pass: process.env.NEXT_PASS
             }
-        })
+          });
 
         const mailOptions = {
-            from: "sonishreyans01@gmail.com",
+            from: process.env.NEXT_EMAIL,
             to: email,
-            subject: emailType == 'VERIFY' ? "Verify your account" : 
-            "Your team credits have reached 0",
-            html:`<p>Click here: <a href="${process.env.DOMAIN}/verifyemail?token=${hashedToken}"></a> to verify you email!</p>`
+            subject: "Verify your account: TEAM GPT",
+            html:`<p>Click here: <a href="${process.env.NEXT_DOMAIN}/verifyemail?token=${hashedToken}">VERIFY LINK</a> to verify you email!</p>`
         }
         const mailresponse = await transport.sendMail(mailOptions); 
-
+        console.log(mailresponse);
         return NextResponse.json({ message: 'sent the mail' }, {status : 200})
 
     } catch (error:any) {

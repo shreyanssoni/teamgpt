@@ -28,11 +28,6 @@ export async function POST(request: NextRequest){
           password: hashedPass, 
           verified: false,
         };
-
-        await axios.post('/api/jobs/startemailjob', {
-          users: email,
-          emailtype: "VERIFY"
-        })
     
         const res = await insertUser(userDetails);
         console.log(res)
