@@ -1,13 +1,13 @@
 import { getUserbyToken, userverified } from "@/drizzle/db";
 import { NextRequest, NextResponse } from "next/server";
-import jwt from 'jwt';
+import jwt from 'jsonwebtoken';
 import { getTokenData } from "@/helpers/getTokenData";
 
 export async function POST(request: NextRequest){
     try {
         const data = await request.json();
-        const {token: string} = data; 
-        console.log(token)
+        const {token} = await data;  
+
         const user = await getUserbyToken(token); 
 
         console.log(user); 
@@ -26,12 +26,12 @@ export async function POST(request: NextRequest){
             expiryTime: tokenD.expiryTime
         }
 
-        const token = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, { expiresIn: tokenData.expiryTime });
+        const tokenNew = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, { expiresIn: tokenData.expiryTime });
         const response = NextResponse.json({
             message: "User successfull verified!",
         }, { status: 200 }); 
 
-        response.cookies.set("token", token, {
+        response.cookies.set("token", tokenNew, {
             httpOnly: true
         })
         

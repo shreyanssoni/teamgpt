@@ -28,7 +28,7 @@ export default async function Home() {
     return [fetchedData,fetchedTeams, decodedToken]; 
   }
 
-  if(decodedToken.verified){
+  if(!decodedToken.verified){
     return (
       <>
         <Unverified /> 

@@ -7,13 +7,14 @@ import { IoIosPeople } from "react-icons/io";
 import { LuShare } from "react-icons/lu";
 import { checkMemberShip } from '@/drizzle/db';
 import { SpinningCircles } from 'react-loading-icons';
-
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 const Details: React.FC = () => {
     const router = useRouter(); 
-    const param = decodeURIComponent(window.location.search);
-    const token = param.split("=")[1];
-    console.log(token)
+    const searchParams = useSearchParams(); 
+    const token = searchParams.get('token');
+    // console.log(token)
     const [loading, setLoading] = useState(false);
 
     const verify = async () => {
@@ -41,6 +42,7 @@ const Details: React.FC = () => {
     }
 
   return (
+    <Suspense>
     <div className="flex items-center justify-center min-h-screen bg-gray-100" style={{ backgroundImage: 'url(assets/bg.jpg)', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundColor: 'black', backgroundPositionX: '30%' }}>
       <Toaster /> 
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
@@ -76,6 +78,7 @@ const Details: React.FC = () => {
         </p>
       </div>
     </div>
+    </Suspense>
   );
 };
 

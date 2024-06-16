@@ -9,10 +9,15 @@ import { useRouter } from "next/navigation";
 import SidePanel from "./SidePanel";
 import styles from './chat.module.css'
 
+interface Message {
+  id: number;
+  content: string;
+}
+
 export default function ChatTemplate({ tokenFunction }: any) {
   const router = useRouter();
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState< Message[]>([]);
   const [username, setUsername] = useState("");
   const [teams, setTeams] = useState([]);
   const [data, setData] = useState({});
@@ -32,7 +37,7 @@ export default function ChatTemplate({ tokenFunction }: any) {
     if(message){
       // console.log(message); 
       setTyping(true); 
-      setMessages((prevMsgs) => [...prevMsgs, {
+      setMessages((prevMsgs: Message[]) => [...prevMsgs, {
         id: Math.floor(Math.random() * 100),
         content: message
       }]);

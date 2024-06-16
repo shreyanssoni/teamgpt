@@ -8,6 +8,11 @@
     font-weight: bolder;
     /* display: inline-block; */
   }
+
+  .untyping {
+    /* Set the text content */
+    color: white; 
+  }
   
   @keyframes typing {
     from { width: 0; }

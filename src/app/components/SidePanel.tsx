@@ -15,11 +15,11 @@ import { SpinningCircles } from 'react-loading-icons';
 
 const SidePanel = ({ messages, updateMessages, tokenFunction }: any) => {
   const [username, setUsername] = useState("");
-  const [teams, setTeams] = useState<string[]>([]);
+  const [teams, setTeams] = useState<any[]>([]);
   const [tokenData, setTokenData] = useState({});
   const [data, setData] = useState({});
-  const [convoslist, setConvoslist] = useState([]);
-  const [selectedTeam, setSelectedTeam] = useState();
+  const [convoslist, setConvoslist] = useState<any[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<number | null>();
   const [selectedConvo, setSelectedConvo] = useState(null); 
   const [convoloading, setConvoloading] = useState(false); 
 
@@ -74,7 +74,7 @@ const SidePanel = ({ messages, updateMessages, tokenFunction }: any) => {
 
   useEffect(() => {
     // fetch the team details ? => and load the convos ? 
-    fetchConversations(selectedTeam); 
+    fetchConversations(selectedTeam || 0); 
     setSelectedConvo(null);
 
   }, [selectedTeam])
@@ -145,14 +145,14 @@ const SidePanel = ({ messages, updateMessages, tokenFunction }: any) => {
           !convoloading && (
             convoslist.map((item) => (
               <li
-                key={item.id}
+                key={item?.id}
                 className="flex w-64 justify-between px-4 rounded-2xl items-center py-2 hover:bg-gray-700 cursor-pointer transition duration-300 ease-in-out"
                 onClick={() => changeConvo(item)}
               >
                 <span className="text-sm flex flex-row items-center">
                   {" "}
                   <IoMdList className="mr-3" size={16} />
-                  {item.slug}
+                  {item?.slug}
                 </span>
                 <div className="hover:bg-gray-600 p-1 rounded-full z-20">
                   <PiDotsThreeOutlineVerticalFill />
@@ -173,13 +173,13 @@ const SidePanel = ({ messages, updateMessages, tokenFunction }: any) => {
             id="footer-select"
             className="w-full bg-gray-700 border border-gray-600 text-sm rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-500"
             onChange={(e)=> {
-              setSelectedTeam(teams[e.target.options.selectedIndex].teams.id)
+              setSelectedTeam(teams[e.target.options.selectedIndex]?.teams?.id)
               // console.log(teams[0]teams.id
             }}
             defaultValue={0}
           >
             {teams.map((item, index) => (
-              <option selected={item.teams.id == teams[0].teams.id ? true : false} id={item.teams.id} key={item.teams.id}>{item.teams.name}</option>
+              <option selected={item?.teams?.id == teams[0].teams?.id ? true : false} id={item?.teams?.id} key={item?.teams?.id}>{item?.teams?.name}</option>
             ))}
           </select>
         </div>
