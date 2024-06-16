@@ -6,6 +6,6 @@ export default defineConfig({
     schema: 'src/drizzle/schema.ts',
     out: './drizzleOut',
     dbCredentials: {
-        url: process.env.POSTGRES_URL
+        url: process.env.POSTGRES_URL || ''
     }
 })
