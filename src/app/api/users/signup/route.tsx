@@ -29,7 +29,7 @@ export async function POST(request: NextRequest){
           verified: false,
         };
 
-        await axios.post('/api/jobsstartemailjob', {
+        await axios.post('/api/jobs/startemailjob', {
           users: email,
           emailtype: "VERIFY"
         })
