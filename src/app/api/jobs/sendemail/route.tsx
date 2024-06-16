@@ -2,8 +2,10 @@ import nodemailer from 'nodemailer';
 import bcryptjs from 'bcryptjs'; 
 import axios from 'axios';
 import { updateUsertoken } from '@/drizzle/db';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const sendEmail = async({ email, emailType } :any) => {
+export async function POST(request: NextRequest){
+    const { email, emailType } :any = await request.json(); 
     try {
         const hashedToken = await bcryptjs.hash(email.toString(), 10);
         if(emailType == 'VERIFY'){
@@ -30,7 +32,11 @@ export const sendEmail = async({ email, emailType } :any) => {
         }
         const mailresponse = await transport.sendMail(mailOptions); 
 
+        return NextResponse.json({ message: 'sent the mail' }, {status : 200})
+
     } catch (error:any) {
-        throw new Error(error.message); 
+        console.log(error.message); 
+        return NextResponse.json({ error: error.message }, {status : 500})
+
     }
 }
