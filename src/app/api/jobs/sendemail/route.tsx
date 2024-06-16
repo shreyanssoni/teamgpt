@@ -3,9 +3,9 @@ import bcryptjs from 'bcryptjs';
 import axios from 'axios';
 import { updateUsertoken } from '@/drizzle/db';
 
-export const sendEmail = async({ email, emailType, userId } :any) => {
+export const sendEmail = async({ email, emailType } :any) => {
     try {
-        const hashedToken = await bcryptjs.hash(userId.toString(), 10);
+        const hashedToken = await bcryptjs.hash(email.toString(), 10);
         if(emailType == 'VERIFY'){
             const expiryDate = new Date();
             expiryDate.setHours(expiryDate.getHours() + 1);

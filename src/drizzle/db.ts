@@ -117,3 +117,11 @@ export const getUserbyToken = async (token: string) => {
     )
     return userData
 }
+
+export const userverified = async (email: string) => {
+    return await db.update(users).set({
+        verified: true, 
+        verifyToken: null,
+        verifyTokenExpiry: null
+    }).where(eq(users.email, email,  )) 
+}

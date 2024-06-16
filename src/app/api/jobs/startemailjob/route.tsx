@@ -1,7 +1,7 @@
 import { Client } from "@upstash/qstash";
 
 const qstashClient = new Client({
-  token: "YOUR_TOKEN",
+  token: process.env.QSTASH_TOKEN,
 });
 
 export async function POST(request: Request) {
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   await qstashClient.publishJSON({
     url: emailAPIURL,
     body: {
-      users
+      users, emailtype
     }
   });
 
