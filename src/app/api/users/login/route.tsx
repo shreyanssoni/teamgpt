@@ -1,4 +1,4 @@
-import { NewUser, insertUser, getUsers, db, getUserbyEmail } from "@/drizzle/db";
+import { NewUser, insertUser, getUsers, db, getUserbyEmail, getMyTeam } from "@/drizzle/db";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -19,23 +19,35 @@ export async function POST(request: NextRequest){
         }
         
         const userFetched = checkUser[0];
+        const userTeamPromise = getMyTeam(userFetched.id); 
+
         const validatePass = await bcryptjs.compare(password, userFetched.password);
         if(!validatePass){
             return NextResponse.json({ message: 'Incorrect Email or Pass.' }, { status: 403 });
         }
 
+        // if(!userFetched.verified){
+        //   return NextResponse.json({ message: 'Unverified' }, { status: 402 });
+        // }
+
+        const userTeam = await userTeamPromise;
+        const expiryTime = rememberMe ? '10d' : '10h'; 
+
         // token
         const tokenData = {
             id: userFetched.id,
-            email: userFetched.email
+            email: userFetched.email,
+            verified: userFetched.verified,
+            teamAdminOf: userTeam,
+            expiryTime: expiryTime
         }
 
-        const expiryTime = rememberMe ? '10d' : '10h'; 
+        const redirectURL = userTeam.length == 0 ? "/details" : "/";
 
-        const token = await jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, { expiresIn: expiryTime });
-
-        const response = NextResponse.json({
-            message: 'success logging in.'}, { status: 201 })
+        console.log(tokenData)
+        const token = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, { expiresIn: expiryTime });
+        
+        const response = NextResponse.json({message: 'success logging in.', redirectURL: redirectURL }, { status: 201 })
 
         response.cookies.set("token", token, {
             httpOnly: true

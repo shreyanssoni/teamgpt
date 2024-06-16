@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { permanentRedirect } from 'next/navigation';
 
 export async function GET(){
   try {
@@ -9,7 +10,7 @@ export async function GET(){
     response.cookies.set("token", "", {
         httpOnly: true, expires: new Date(0)
     });
-
+    
     return response 
     
   } catch (error: any){

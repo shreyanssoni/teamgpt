@@ -1,4 +1,5 @@
 import { NewUser, insertUser, getUsers, db, getUserbyEmail } from "@/drizzle/db";
+import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 var bcryptjs = require('bcryptjs');
 
@@ -25,8 +26,13 @@ export async function POST(request: NextRequest){
           email: email,
           name: name,
           password: hashedPass, 
-          verfied: false
+          verified: false,
         };
+
+        await axios.post('/api/jobsstartemailjob', {
+          users: email,
+          emailtype: "VERIFY"
+        })
     
         const res = await insertUser(userDetails);
         console.log(res)

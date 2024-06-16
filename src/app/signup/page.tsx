@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import toast, {Toaster} from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { SpinningCircles } from 'react-loading-icons';
 
 const SignupPage: React.FC = () => {
     const router = useRouter(); 
@@ -21,7 +22,7 @@ const SignupPage: React.FC = () => {
             }
             
             await axios.post("api/users/signup", userdetails);    
-            toast.success("Successfully Logged In!");
+            toast.success("Successfully Signed Up!");
             router.push('login');
             
         } catch (error: any) {
@@ -95,7 +96,13 @@ const SignupPage: React.FC = () => {
               className="w-full px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               onClick={onSignUp}
             >
-              Sign Up
+              { !loading && 
+              <span>Sign Up</span> 
+              }
+              {
+                loading &&
+                <SpinningCircles style={{ width: '28px', height: '28px', textAlign: 'center', margin: 'auto' }}/> 
+              }
             </button>
           </div>
         </div>

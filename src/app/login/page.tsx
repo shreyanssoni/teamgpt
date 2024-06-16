@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import toast, {Toaster} from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { SpinningCircles } from 'react-loading-icons';
 
 const LoginPage: React.FC = () => {
     const router = useRouter(); 
@@ -20,19 +21,25 @@ const LoginPage: React.FC = () => {
                 rememberMe: rememberMe
             });
             
-            if(response.status == 200 || response.status == 201){
-                toast.success("Successfully Logged In!");
-                router.push('/');
+            toast.success("Successfully Logged In!");
+            console.log(response.data.redirectURL);
+            if(response.data.redirectURL == "/"){
+              router.push("/");
+            } else {
+              router.push("/details");
             }
+
         } catch (error: any) {
             if(error.response.status == 404){
                 setTimeout(() => {
                     router.push('/signup')
-                }, 800);
+                }, 300);
                 toast.error("User does not Exist.");
             } else if (error.response.status == 403){
                 toast.error("Incorrect Email or Password. Retry!");
                 // router.push('/signup')
+            } else if (error.response.status == 402) {
+                toast.error("Email not verified.")
             } else {
                 toast.error("Error signing in.");
             }
@@ -89,7 +96,7 @@ const LoginPage: React.FC = () => {
                 name="remember_me"
                 type="checkbox"
                 checked={rememberMe}
-                onClick={()=>{setRememberMe(!rememberMe)}}
+                onChange={()=>{setRememberMe(!rememberMe)}}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
               <label htmlFor="remember_me" className="block ml-2 text-sm text-gray-900">
@@ -102,7 +109,13 @@ const LoginPage: React.FC = () => {
               className="w-full px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               onClick={onLogin}
             >
-              Sign in
+              { !loading && 
+              <span>Login</span> 
+              }
+              {
+                loading &&
+                <SpinningCircles style={{ width: '28px', height: '28px', textAlign: 'center', margin: 'auto' }}/> 
+              }
             </button>
           </div>
         </div>
