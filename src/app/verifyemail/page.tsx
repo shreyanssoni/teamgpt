@@ -7,13 +7,13 @@ import { IoIosPeople } from "react-icons/io";
 import { LuShare } from "react-icons/lu";
 import { checkMemberShip } from '@/drizzle/db';
 import { SpinningCircles } from 'react-loading-icons';
-
+import { useSearchParams } from 'next/navigation';
 
 const Details: React.FC = () => {
     const router = useRouter(); 
-    const param = decodeURIComponent(window.location.search);
-    const token = param.split("=")[1];
-    console.log(token)
+    const searchParams = useSearchParams(); 
+    const token = searchParams.get('token');
+    // console.log(token)
     const [loading, setLoading] = useState(false);
 
     const verify = async () => {

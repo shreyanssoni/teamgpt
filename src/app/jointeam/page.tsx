@@ -7,13 +7,13 @@ import { IoIosPeople } from "react-icons/io";
 import { LuShare } from "react-icons/lu";
 import { checkMemberShip } from '@/drizzle/db';
 import { SpinningCircles } from 'react-loading-icons';
-
+import { useSearchParams } from 'next/navigation';
 
 const Details: React.FC = () => {
     const router = useRouter(); 
-    const param = decodeURIComponent(window.location.search);
-    const teamName = param.split("=")[1].split("&")[0];
-    const teamId = param.split("=")[2];
+    const searchParams = useSearchParams();
+    const teamName = searchParams.get('team');
+    const teamId = searchParams.get('id');
     const [loading, setLoading] = useState(false);
 
     const joinTeam = async () => {
