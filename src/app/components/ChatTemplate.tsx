@@ -39,32 +39,39 @@ export default function ChatTemplate({ tokenFunction }: any) {
   };
 
   async function addNewMessage(msgPayload: any) {
+    console.log(msgPayload);
     const newMsgAdded = await axios.post(
       "/api/conversations/addmessage",
       msgPayload
     );
-    console.log(msgPayload);
+    console.log("new message,", newMsgAdded);
     return newMsgAdded;
   }
 
   async function createNewConversation(payload: any, message: string) {
     try {
       const newConv = await axios.post("/api/conversations/addnew", payload);
-      // console.log("printing new" , newConv.data.content[0])
-      setSelectedConvo(newConv.data.content[0].id);
-      convoRef.current = newConv.data.content[0].id;
-
-      setConvoItem(newConv.data.content[0]);
-
+      console.log("printing new" , newConv.data.content)
+    
       const msgPayload = {
         newMsg: message,
-        convoId: newConv.data.content[0].id,
+        convoId: newConv.data.content.id,
       };
 
       await addNewMessage(msgPayload);
       // console.log("ref", convoRef);
+      setSelectedConvo(newConv.data.content.id);
+      convoRef.current = newConv.data.content.id;
+
+      setConvoItem(newConv.data.content);
+      // console.log("trial")
       return newConv.data.content[0];
     } catch (error:any) {
+      // console.log(error);
+      if(error.response == undefined){
+        console.log(error);
+        return "undefined type."
+      }
       if(error.response.status == 422){
         toast.error("Team Credits are low.")
         await axios.post("/api/jobs/startemailjob", {
@@ -95,7 +102,7 @@ export default function ChatTemplate({ tokenFunction }: any) {
         // console.log(selectedTeam, slug)
         const payload = {
           slug: slug,
-          teamId: selectedTeam,
+          teamid: selectedTeam,
         };
         console.log(payload);
         createNewConversation(payload, message);

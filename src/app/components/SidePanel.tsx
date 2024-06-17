@@ -16,8 +16,6 @@ import { SpinningCircles } from 'react-loading-icons';
 const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoItem, tokenFunction, updateloading }: any) => {
   const [username, setUsername] = useState("");
   const [teams, setTeams] = useState<any[]>([]);
-  const [tokenData, setTokenData] = useState({});
-  const [data, setData] = useState({});
   const [convoslist, setConvoslist] = useState<any[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
   const [selectedConvo, setSelectedConvo] = useState(null); 
@@ -26,13 +24,14 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   async function changeConvo(item: any){
     updateloading(true); 
     if(selectedConvo != item.id){
+      updateConvo(item.id); 
       setSelectedConvo(item.id);
       // setConvoloading(true); 
-      updateConvo(item.id); 
       // updateMessages([]); 
       const messagesList = await axios.post('/api/conversations/fetchMessages', {
         convId: item.id
       }); 
+      
       updateMessages([messagesList.data.content].sort((a:any,b:any) => ( a.createdAt.getTime() - b.createdAt.getTime() )));
       setConvoloading(false); 
     }

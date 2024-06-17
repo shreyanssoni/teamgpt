@@ -19,25 +19,29 @@ export const getUserbyEmail = async (email: string) => {
 }
 
 export const createNewConversation = async (slug: string, teamid: number) => {
-    return db.transaction(async (tx) => {
+    const creating =  await db.transaction(async (tx) => {
         const [credits] = await tx.select({credits: teams.credits})
                         .from(teams).where(eq(teams.id, teamid));
 
+        
         if(credits.credits <= 0){
             await tx.rollback()
-            return 'team credits are'
+            return 'team credits are insufficient'
         }
 
-        await tx.insert(conversations).values({
+        const [newconversation] = await tx.insert(conversations).values({
             slug: slug,
             belongsTo: teamid
-        }).returning()
-
-
-        await db.update(teams).set({
+        }).returning();
+        
+        const updatecount = await tx.update(teams).set({
             credits: sql`${teams.credits} - 1`
         }).where(eq(teams.id, teamid))
+        
+        return newconversation
     })
+    // console.log(creating)
+    return creating
 }
 
 export const fetchMessages = async (conversationId: number) => {
@@ -75,7 +79,7 @@ export const createNewMessage = async (content: string, conversationId: number) 
         content: content,
         partOf: conversationId
     }).returning()
-
+    // console.log(newMessage)
     return newMessage
 }
 
@@ -106,7 +110,6 @@ export const checkMemberShip = async (id: number, teamId: number ) => {
 }  
 
 export const addMembertoTeam = async (id: number, teamId: number) => {
-
     return db.transaction(async (tx) => {
         const [members] = await tx.select({members: teams.memberCount})
                             .from(teams).where(eq(teams.id, teamId)); 
@@ -116,7 +119,7 @@ export const addMembertoTeam = async (id: number, teamId: number) => {
             return "Team is Full."
         }
 
-        await tx.insert(teamMembers).values({
+        const [value] = await tx.insert(teamMembers).values({
             userId: id,
             teamId: teamId
         }).returning()
@@ -124,7 +127,8 @@ export const addMembertoTeam = async (id: number, teamId: number) => {
         await db.update(teams).set({
             memberCount: sql`${teams.memberCount} + 1`
         }).where(eq(teams.id, teamId))
-
+        
+        return value; 
     })
 }
 

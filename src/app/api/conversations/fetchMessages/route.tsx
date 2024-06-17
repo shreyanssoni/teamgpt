@@ -5,7 +5,7 @@ export async function POST(request: NextRequest){
     const { convId } = await request.json();
     try { 
         const messagesFetched = await fetchMessages(convId); 
-        // console.log("message", messagesFetched); 
+        console.log("message", messagesFetched, convId); 
         return NextResponse.json({content: messagesFetched}, {status: 200})
     } catch (error) {
         console.error(error); 

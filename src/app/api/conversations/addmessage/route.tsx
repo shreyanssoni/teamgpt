@@ -9,7 +9,6 @@ export async function POST(request: NextRequest){
         // console.log("message", newMsg, convoId); 
         return NextResponse.json({content: addedMessage}, {status: 200})
     } catch (error) {
-        console.error(error); 
         return NextResponse.json({ content: "none"}, {status: 500}); 
     }
 }
