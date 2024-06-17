@@ -13,7 +13,7 @@ import axios from "axios";
 import { SpinningCircles } from 'react-loading-icons';
 
 
-const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoItem, tokenFunction }: any) => {
+const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoItem, tokenFunction, updateloading }: any) => {
   const [username, setUsername] = useState("");
   const [teams, setTeams] = useState<any[]>([]);
   const [tokenData, setTokenData] = useState({});
@@ -24,6 +24,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   const [convoloading, setConvoloading] = useState(false); 
 
   async function changeConvo(item: any){
+    updateloading(true); 
     if(selectedConvo != item.id){
       setSelectedConvo(item.id);
       // setConvoloading(true); 
@@ -37,6 +38,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
     }
 
     setConvoloading(false); 
+    updateloading(false); 
     
     // console.log("list" , messagesList.data)
   }
@@ -57,8 +59,12 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
 
     if(convos.status  && selectedTeam){
       const retrievedConvos = convos.data.content; 
-      // setConvoslist(retrievedConvos.sort((a : any, b: any) =>  b.updatedAt.getTime() - a.updatedAt.getTime()));
-      setConvoslist(retrievedConvos);
+      if(retrievedConvos.length > 0){
+        setConvoslist(retrievedConvos.sort((a : any, b: any) =>  {
+          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+        }));
+      }
+      // setConvoslist(retrievedConvos);
     }
 
     setConvoloading(false); 

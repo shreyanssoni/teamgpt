@@ -20,9 +20,6 @@ export default function ChatTemplate({ tokenFunction }: any) {
   const router = useRouter();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [username, setUsername] = useState("");
-  const [teams, setTeams] = useState([]);
-  const [data, setData] = useState({});
   const [selectedTeam, setSelectedTeam] = useState(0);
   const [typing, setTyping] = useState(false);
   const [selectedConvo, setSelectedConvo] = useState<any | null>(null);
@@ -30,6 +27,7 @@ export default function ChatTemplate({ tokenFunction }: any) {
   const convoRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false); 
   const noCreditsRef = useRef(false);
+  const [loading, setLoading] = useState(false); 
 
   const handleMessageChange = (e: any) => {
     setMessage(e.target.value);
@@ -194,6 +192,10 @@ export default function ChatTemplate({ tokenFunction }: any) {
     
   };
 
+  const updateloading = (value: any) => {
+    setLoading(value); 
+  }
+
 
   return (
     <div className="flex-1 flex-row">
@@ -204,6 +206,7 @@ export default function ChatTemplate({ tokenFunction }: any) {
         updateTeam={updateTeam}
         convoItem={convoItem}
         tokenFunction={tokenFunction}
+        updateloading={updateloading}
       />
       <Toaster />
       <div className="flex h-screen float text-white">
@@ -233,7 +236,9 @@ export default function ChatTemplate({ tokenFunction }: any) {
             <IoLogOutOutline size={28} />
           </span>
         </div>
-        <div className="m-auto max-w-4xl w-full h-screen pt-8">
+        {
+          !loading && (
+<div className="m-auto max-w-4xl w-full h-screen pt-8">
           <div className="rounded-lg items-center p-6 flex flex-col h-full">
             <div
               style={{ scrollbarWidth: "none" }}
@@ -282,6 +287,16 @@ export default function ChatTemplate({ tokenFunction }: any) {
             </div>
           </div>
         </div>
+          )
+        } {
+          loading && (
+            <div className="flex justify-center items-center w-full">
+            {/* <div className="text-white-100 text-center font-bold mr-1">Loading</div> */}
+            <div className={styles.loader}></div>
+          </div>
+          )
+        }
+        
       </div>
     </div>
   );
