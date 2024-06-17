@@ -27,13 +27,14 @@ export async function POST(request: NextRequest){
         }
 
         const tokenNew = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, { expiresIn: tokenData.expiryTime });
+        
         const response = NextResponse.json({
             message: "User successfull verified!",
         }, { status: 200 }); 
 
-        response.cookies.set("token", tokenNew, {
-            httpOnly: true
-        })
+        response.cookies.set("token", "", {
+            httpOnly: true, expires: new Date(0)
+        });
         
         return response 
 

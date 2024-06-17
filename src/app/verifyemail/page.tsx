@@ -27,6 +27,7 @@ const Details: React.FC = () => {
             // console.log(res.data.message); 
             
             toast.success(`Verified`);
+            
             router.push("/");
 
         } catch (error: any) {
