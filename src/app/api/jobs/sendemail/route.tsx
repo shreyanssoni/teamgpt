@@ -30,7 +30,7 @@ export async function POST(request: NextRequest){
             html:`<p>Click here: <a href="${process.env.NEXT_DOMAIN}/verifyemail?token=${hashedToken}">VERIFY LINK</a> to verify you email!</p>`
         }
         const mailresponse = await transport.sendMail(mailOptions); 
-        console.log(mailresponse);
+        // console.log(mailresponse);
         return NextResponse.json({ message: 'sent the mail' }, {status : 200})
 
     } catch (error:any) {

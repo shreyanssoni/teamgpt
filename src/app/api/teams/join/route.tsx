@@ -11,7 +11,7 @@ export async function POST(request: NextRequest){
             return NextResponse.json({ success: true, message: "user already in team!" }, { status: 402 })
         }
         const added = await addMembertoTeam(tokenData.id, teamId); 
-        console.log(added); 
+        // console.log(added); 
 
         return NextResponse.json({ success: true })
     } catch (error:any) {

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest){
 
         const user = await getUserbyToken(token); 
 
-        console.log(user); 
+        // console.log(user); 
         if(!user || user.length == 0){
             return NextResponse.json({ error: "user not found" }, {status: 400}); 
         }

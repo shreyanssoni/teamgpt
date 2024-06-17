@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function NotTeamFound() {
-  console.log("hello")
+  // console.log("hello")
     return (
         <div className="min-h-screen flex items-center justify-center bg-black">
           <div className="max-w-md p-8 bg-gray-800 rounded-lg shadow-lg text-center">

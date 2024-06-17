@@ -53,7 +53,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
       teamId: selectedTeam
     })
 
-    console.log("convos", convos); 
+    // console.log("convos", convos); 
 
     if(convos.status  && selectedTeam){
       const retrievedConvos = convos.data.content; 
@@ -69,7 +69,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
     const teams = await axios.post('/api/conversations/fetchTeams', {
       userid: userid
     })
-    console.log("teams", teams.data.content);
+    // console.log("teams", teams.data.content);
     setTeams(teams.data.content);
     return "success"
   }
@@ -160,10 +160,11 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
               setSelectedTeam(teams[e.target.options.selectedIndex]?.teams?.id)
               // console.log(teams[0]teams.id
             }}
-            defaultValue={0}
+            defaultValue={tokenFunction.teamAdminOf[0].id}
+            defaultChecked={true}
           >
             {teams.map((item, index) => (
-              <option selected={item?.teams?.id == teams[0].teams?.id ? true : false} id={item?.teams?.id} key={item?.teams?.id}>{item?.teams?.name}</option>
+              <option id={item?.teams?.id} selected={item?.teams?.id == tokenFunction.teamAdminOf[0].id ? true : false} key={item?.teams?.id}>{item?.teams?.name}</option>
             ))}
           </select>
         </div>

@@ -131,7 +131,7 @@ export const addMembertoTeam = async (id: number, teamId: number) => {
 export type NewTeam = typeof teams.$inferInsert;
 
 export const addNewTeam = async (payload: any) => {
-    console.log("payload", payload);
+    // console.log("payload", payload);
     return db.insert(teams).values(payload).returning();
 }
 
@@ -168,4 +168,8 @@ export const userverified = async (email: string) => {
         verifyToken: null,
         verifyTokenExpiry: null
     }).where(eq(users.email, email,  )) 
+}
+
+export const userRemoveFromTeam = async (userid: number, teamid: number) => {
+    return await db.delete(teamMembers).where(and(eq(teamMembers.userId, userid), eq(teamMembers.teamId, teamid)));
 }

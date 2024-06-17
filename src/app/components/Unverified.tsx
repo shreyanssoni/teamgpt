@@ -15,7 +15,7 @@ export default function Unverified({decodedToken}:any) {
 
   const resend = async () => {
     const cookies = await decodedToken();
-    console.log(cookies.email) 
+    // console.log(cookies.email) 
     const res = await axios.post("/api/jobs/startemailjob", {
               email: cookies.email
       })

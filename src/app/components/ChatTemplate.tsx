@@ -172,33 +172,28 @@ export default function ChatTemplate({ tokenFunction }: any) {
   const updateConvo = (values: any) => {
     setSelectedConvo(values);
     convoRef.current = values;
-    console.log(values);
+    // console.log(values);
   };
 
   const updateTeam = (values: any) => {
     setSelectedTeam(values);
-    console.log(values);
+    // console.log(values);
   };
 
-  const user = 'John Doe';
-  const team1 = {
-    name: 'Developers',
-    members: [
-      { id: 1, name: 'Alice' },
-      { id: 2, name: 'Bob' },
-    ],
+  const handleRemoveMember = async (id: number, teamid: number) => {
+    try {
+      await axios.post('/api/teams/remove', {
+        userid: id,
+        teamid: teamid
+      })
+      return "removed"
+    } catch (error) {
+      console.error("error removing", error); 
+      return "error"
+    }
+    
   };
-  const otherTeams = ['Designers', 'Marketing'];
 
-  const handleRemoveMember = (id: number) => {
-    // Implement member removal logic here
-    console.log(`Remove member with id ${id}`);
-  };
-
-  const handleWithdraw = (team: string) => {
-    // Implement withdraw logic here
-    console.log(`Withdraw from team ${team}`);
-  };
 
   return (
     <div className="flex-1 flex-row">
@@ -224,11 +219,10 @@ export default function ChatTemplate({ tokenFunction }: any) {
             <Dialog 
               user={tokenFunction.name}
               id={tokenFunction.id}
+              email={tokenFunction.email}
               team={tokenFunction.teamAdminOf[0]}
-              otherTeams={otherTeams}
               onClose={() => setIsOpen(false)}
               onRemoveMember={handleRemoveMember}
-              onWithdraw={handleWithdraw}
             />
           )}
 

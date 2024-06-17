@@ -2,6 +2,8 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { FaTimes, FaTrashAlt, FaSignOutAlt } from 'react-icons/fa';
 import styles from './chat.module.css'
 import axios from 'axios';
+import { FaPlus } from "react-icons/fa6";
+
 
 interface TeamMember {
   id: number;
@@ -11,25 +13,26 @@ interface TeamMember {
 interface DialogProps {
   user: string;
   id: number;
+  email: string;
   team: {
     name: string;
     id: number; 
     members: TeamMember[];
   };
-  otherTeams: string[];
   onClose: () => void;
-  onRemoveMember: (id: number) => void;
-  onWithdraw: (team: string) => void;
+  onRemoveMember: (id:number, team: number) => void;
 }
 
-const Dialog: FC<DialogProps> = ({ user, id, team, otherTeams, onClose, onRemoveMember, onWithdraw }) => {
+const Dialog: FC<DialogProps> = ({ user, id, email, team, onClose, onRemoveMember }) => {
     
     const teamRef:any = useRef(null);
     const membersRef:any = useRef(null);
     const [loading, setLoading] = useState(true);
+    const [refresh, setRefresh] = useState<number>(0)
     
     async function getDetails(){
       setLoading(true); 
+      // console.log(user, id, email, team)
       const teamsPromise = axios.post('/api/conversations/fetchTeams' , {
         userid: id
       })
@@ -40,7 +43,8 @@ const Dialog: FC<DialogProps> = ({ user, id, team, otherTeams, onClose, onRemove
 
       const teams = await teamsPromise;
       const members = await getMembersPromise; 
-      teamRef.current = [teams.data.content[0].teams]; 
+      teamRef.current = [teams.data.content];
+      // console.log(teamRef.current[0])
       membersRef.current = [members.data.content];
       // console.log("len", membersRef.current[0].length)
       setLoading(false); 
@@ -48,11 +52,16 @@ const Dialog: FC<DialogProps> = ({ user, id, team, otherTeams, onClose, onRemove
       
     }
 
+    const shareInvite = async () => {
+        const encodedBody = encodeURIComponent(`You are invited to join ${team.name} by ${user}. Click here: ${process.env.NEXT_DOMAIN}//jointeam?team=${team.name}&${team.id}\n`);
+        window.location.href = `mailto:${email}?subject=${`Invited to join ${team.name}`}&body=${encodedBody}`;
+      }
+
     useEffect(() => {
         getDetails()
 
-        console.log(teamRef);
-    }, [])
+        // console.log(teamRef);
+    }, [refresh])
 
     return (
     <div className="fixed inset-0 flex items-center justify-center">
@@ -74,10 +83,13 @@ const Dialog: FC<DialogProps> = ({ user, id, team, otherTeams, onClose, onRemove
         )
         } {!loading && (
           <ul className="mt-2">
-          {teamRef.current.map((member:any) => (
-            <li key={member.id} className="flex justify-between items-center mt-1">
-              {member.name}
-              <button onClick={() => onRemoveMember(member.id)} className="text-red-500">
+          {teamRef.current[0].map((member:any) => (
+            <li key={member.teams.id} className="flex justify-between items-center mt-1">
+              {member.teams.name}
+              <button onClick={() => {
+                onRemoveMember(id, team.id)
+                setRefresh(id)
+              }} className="text-red-500">
                 <FaTrashAlt />
               </button>
             </li>
@@ -100,8 +112,7 @@ const Dialog: FC<DialogProps> = ({ user, id, team, otherTeams, onClose, onRemove
             <li key={item.id} className="flex justify-between items-center mt-1">
               {item.name}
               <button onClick={() => {
-              {console.log(item.id, team.id)}
-                if(item.id != team.id) onWithdraw(item.id)
+                if(item.id != team.id) onRemoveMember(item.id, team.id)
                 }} className="text-yellow-500">
                 {/* <FaSignOutAlt /> */}
                 <span className='text-sm'>Remove</span>
@@ -116,12 +127,15 @@ const Dialog: FC<DialogProps> = ({ user, id, team, otherTeams, onClose, onRemove
         </ul>
       )}
       </div>
+      <div>
+        <button onClick={shareInvite} className='hover:bg-blue-500 text-blue-600 hover:border-none border border-blue-600 hover:text-white transition' style={{ marginTop: '15px', zIndex: '50', padding: '2px 6px', borderRadius: '12px'}}><FaPlus className='inline mb-1' size={12} /> Invite</button>
+      </div>
       <div className="flex justify-end mt-6">
         <button onClick={onClose} className="mr-2 px-4 py-2 bg-gray-200 text-gray-700 rounded">
           Cancel
         </button>
-        <button className="px-4 py-2 bg-white text-black border border-black rounded">
-          Save
+        <button onClick={onClose} className="px-4 py-2 bg-blue-600 text-white border rounded hover:bg-blue-500">
+          Done
         </button>
       </div>        
       </div>

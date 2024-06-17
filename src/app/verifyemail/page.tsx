@@ -24,7 +24,7 @@ const Details: React.FC = () => {
               token: token
             })
 
-            console.log(res.data.message); 
+            // console.log(res.data.message); 
             
             toast.success(`Verified`);
             router.push("/");

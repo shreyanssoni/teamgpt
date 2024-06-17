@@ -22,7 +22,7 @@ const LoginPage: React.FC = () => {
             });
             
             toast.success("Successfully Logged In!");
-            console.log(response.data.redirectURL);
+            // console.log(response.data.redirectURL);
             if(response.data.redirectURL == "/"){
               router.push("/");
             } else {
