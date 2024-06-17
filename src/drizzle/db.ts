@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/vercel-postgres";
 import { sql as vercelsql } from "@vercel/postgres";
 import { users, teams, teamMembers, conversations, messages } from "./schema";
 import * as schema from './schema';
-import { and, eq, gte, sql, gt } from "drizzle-orm";
+import { and, eq, gte, sql, gt, or, inArray } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 export const db = drizzle(vercelsql, { schema });
@@ -19,21 +19,49 @@ export const getUserbyEmail = async (email: string) => {
 }
 
 export const createNewConversation = async (slug: string, teamid: number) => {
-    const newConversation = await db.insert(conversations).values({
-        slug: slug,
-        belongsTo: teamid,
-    }).returning()
+    return db.transaction(async (tx) => {
+        const [credits] = await tx.select({credits: teams.credits})
+                        .from(teams).where(eq(teams.id, teamid));
 
-    const reduceTeamCredits = await db.update(teams).set({
-        credits: sql`${teams.credits} - 1`
-    }).where(eq(teams.id, teamid))
+        if(credits.credits <= 0){
+            await tx.rollback()
+            return 'team credits are'
+        }
 
-    return newConversation;
+        await tx.insert(conversations).values({
+            slug: slug,
+            belongsTo: teamid
+        }).returning()
+
+
+        await db.update(teams).set({
+            credits: sql`${teams.credits} - 1`
+        }).where(eq(teams.id, teamid))
+    })
 }
 
 export const fetchMessages = async (conversationId: number) => {
     const fetchedMsgs = await db.select().from(messages).where(eq(messages.partOf, conversationId))
     return fetchedMsgs; 
+}
+
+export const fetchMembers = async (teamId: number) => {
+    const fetchedMembers = await db.select({
+        userId: teamMembers.userId
+    })
+    .from(teamMembers)
+    .where(eq(teamMembers.teamId, teamId));
+    
+    const userIdArray = fetchedMembers.map(record => record.userId);
+    
+    if (userIdArray.length === 0) {
+        return [];
+    }
+    
+    const usersResult = await db.select().from(users)
+                                .where(inArray(users.id, userIdArray));
+    
+    return usersResult;
 }
 
 export const getTeamConversations = async (teamId: number) => {
@@ -57,11 +85,17 @@ export const getMyTeam = async (id: number) => {
 }
 
 export const getTeamsForUser = async (id: number) => {
-    const allTeams = await db.select().from(teamMembers)
-                    .leftJoin(teams, eq(teamMembers.teamId, teams.id))
-                    .where(eq(teamMembers.userId, id))
-                    
-    // console.log(allTeams);
+    // const allTeams = await db.select().from(teamMembers)
+    //                 .leftJoin(teams, eq(teamMembers.teamId, teams.id))
+    //                 .where(eq(teamMembers.userId, id))
+    const allTeams = await db.select().from(teams)
+                    .leftJoin(teamMembers, eq(teamMembers.teamId, teams.id))
+                    .where(
+                        or(
+                            eq(teamMembers.userId, id),
+                            eq(teams.admin, id)
+                        )
+                    )
 
     return allTeams
 }
@@ -72,22 +106,32 @@ export const checkMemberShip = async (id: number, teamId: number ) => {
 }  
 
 export const addMembertoTeam = async (id: number, teamId: number) => {
-    const added =  await db.insert(teamMembers).values({
-        userId: id,
-        teamId: teamId
-    }).returning()
 
-    const updateMembersCount = await db.update(teams).set({
-        memberCount: sql`${teams.memberCount} + 1`
-    }).where(eq(teams.id, teamId))
+    return db.transaction(async (tx) => {
+        const [members] = await tx.select({members: teams.memberCount})
+                            .from(teams).where(eq(teams.id, teamId)); 
+        
+        if(members.members >= 5){
+            await tx.rollback()
+            return "Team is Full."
+        }
 
-    return added
+        await tx.insert(teamMembers).values({
+            userId: id,
+            teamId: teamId
+        }).returning()
+
+        await db.update(teams).set({
+            memberCount: sql`${teams.memberCount} + 1`
+        }).where(eq(teams.id, teamId))
+
+    })
 }
 
 export type NewTeam = typeof teams.$inferInsert;
 
 export const addNewTeam = async (payload: any) => {
-    console.log("payload", payload);
+    // console.log("payload", payload);
     return db.insert(teams).values(payload).returning();
 }
 
@@ -124,4 +168,8 @@ export const userverified = async (email: string) => {
         verifyToken: null,
         verifyTokenExpiry: null
     }).where(eq(users.email, email,  )) 
+}
+
+export const userRemoveFromTeam = async (userid: number, teamid: number) => {
+    return await db.delete(teamMembers).where(and(eq(teamMembers.userId, userid), eq(teamMembers.teamId, teamid)));
 }

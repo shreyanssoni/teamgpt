@@ -44,7 +44,7 @@ export async function POST(request: NextRequest){
 
         const redirectURL = userTeam.length == 0 ? "/details" : "/";
 
-        console.log(tokenData)
+        // console.log(tokenData)
         const token = jwt.sign(tokenData, process.env.JWT_TOKEN_SECRET!, { expiresIn: expiryTime });
         
         const response = NextResponse.json({message: 'success logging in.', redirectURL: redirectURL }, { status: 201 })

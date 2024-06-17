@@ -30,7 +30,7 @@ export async function POST(request: NextRequest){
         };
     
         const res = await insertUser(userDetails);
-        console.log(res)
+        // console.log(res)
         return NextResponse.json({ message: 'success creating user.' }, { status: 201 });
       } catch (error: any) {
         // Log the error for debugging purposes

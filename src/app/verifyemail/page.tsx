@@ -20,17 +20,19 @@ const Details: React.FC = () => {
     const verify = async () => {
         try {
             setLoading(true);
-            await axios.post("/api/users/verifyemail", {
+            const res = await axios.post("/api/users/verifyemail", {
               token: token
             })
+
+            // console.log(res.data.message); 
             
             toast.success(`Verified`);
-            router.push("/login");
+            router.push("/");
 
         } catch (error: any) {
             if(error.response.status == 402){
               toast.error(`User Already Verified!`);
-              router.push('/login');
+              router.push('/');
             } else {
                 toast.error(`Verification Failed`);
             }

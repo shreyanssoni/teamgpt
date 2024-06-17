@@ -7,8 +7,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const email = body.email; 
     const rootDomain = request.url.split('/').slice(0, 3).join('/');
-    console.log(rootDomain); 
-    const emailAPIURL = `${process.env.DOMAIN}/api/jobs/sendemail`; 
+    // console.log(rootDomain); 
+    const emailAPIURL = `${process.env.NEXT_DOMAIN}/api/jobs/sendemail`; 
   
     // Tell QStash to start the background job.
     // For proper error handling, refer to the quick start.
