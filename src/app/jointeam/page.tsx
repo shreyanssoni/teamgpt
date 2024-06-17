@@ -32,6 +32,8 @@ const Details: React.FC = () => {
             if(error.response.status == 402){
               toast.error(`User Already in Team!`);
               router.push('/');
+            } else if(error.response.status == 422) {
+              toast.error("Team is full.")
             } else {
               toast.error(`Error adding to team.`);
             }

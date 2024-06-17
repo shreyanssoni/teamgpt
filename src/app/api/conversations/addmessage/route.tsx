@@ -6,7 +6,7 @@ export async function POST(request: NextRequest){
     try { 
         console.log(newMsg, convoId); 
         const addedMessage = await createNewMessage(newMsg, convoId); 
-        // console.log("message", addedMessage); 
+        console.log("message", newMsg, convoId); 
         return NextResponse.json({content: addedMessage}, {status: 200})
     } catch (error) {
         console.error(error); 

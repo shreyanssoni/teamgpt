@@ -13,24 +13,39 @@ import axios from "axios";
 import { SpinningCircles } from 'react-loading-icons';
 
 
-const SidePanel = ({ messages, updateMessages, tokenFunction }: any) => {
+const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoItem, tokenFunction }: any) => {
   const [username, setUsername] = useState("");
   const [teams, setTeams] = useState<any[]>([]);
   const [tokenData, setTokenData] = useState({});
   const [data, setData] = useState({});
   const [convoslist, setConvoslist] = useState<any[]>([]);
-  const [selectedTeam, setSelectedTeam] = useState<number | null>();
+  const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
   const [selectedConvo, setSelectedConvo] = useState(null); 
   const [convoloading, setConvoloading] = useState(false); 
 
   async function changeConvo(item: any){
-    setSelectedConvo(item.id);
-    const messagesList = await axios.post('/api/conversations/fetchMessages', {
-      convId: item.id
-    }); 
-    updateMessages([messagesList.data.content].sort((a:any,b:any) => ( a.createdAt.getTime() - b.createdAt.getTime() )));
+    if(selectedConvo != item.id){
+      setSelectedConvo(item.id);
+      // setConvoloading(true); 
+      updateConvo(item.id); 
+      // updateMessages([]); 
+      const messagesList = await axios.post('/api/conversations/fetchMessages', {
+        convId: item.id
+      }); 
+      updateMessages([messagesList.data.content].sort((a:any,b:any) => ( a.createdAt.getTime() - b.createdAt.getTime() )));
+      setConvoloading(false); 
+    }
+
+    setConvoloading(false); 
+    
     // console.log("list" , messagesList.data)
   }
+
+  useEffect(()=>{
+    setConvoloading(true);
+    setConvoslist((prevList) => [...prevList, convoItem]); 
+    setConvoloading(false); 
+  }, [convoItem])
 
   const fetchConversations = async (selectedTeam: number) => {
     setConvoloading(true);
@@ -43,32 +58,44 @@ const SidePanel = ({ messages, updateMessages, tokenFunction }: any) => {
     if(convos.status  && selectedTeam){
       const retrievedConvos = convos.data.content; 
       // setConvoslist(retrievedConvos.sort((a : any, b: any) =>  b.updatedAt.getTime() - a.updatedAt.getTime()));
-      setConvoslist(retrievedConvos); 
+      setConvoslist(retrievedConvos);
     }
+
     setConvoloading(false); 
     return convos.data.content || []; 
   }
 
-  useEffect(() => {
+  const fetchTeams = async (userid: number) => {
+    const teams = await axios.post('/api/conversations/fetchTeams', {
+      userid: userid
+    })
+    console.log("teams", teams.data.content);
+    setTeams(teams.data.content);
+    return "success"
+  }
+
+  useEffect(() => { //initial load...
     setConvoloading(true);
-    async function getData() {
-      const [fetchData, fetchTeams, decodedToken] = await tokenFunction();
-      setUsername(fetchData[0].name);
-      setData(fetchData[0]);
-      const teamsArr = fetchTeams; 
-      teamsArr.unshift({teams: decodedToken.teamAdminOf[0]})
-      setTeams(teamsArr);
-      if(!selectedTeam){
-        fetchConversations(decodedToken.teamAdminOf[0].id);
-      }
-      setConvoloading(false);
-      setSelectedTeam(decodedToken.teamAdminOf[0].id);
+    const tokenData = tokenFunction; 
+    setUsername(tokenData.name);
+
+    if(selectedTeam == null){
+      setSelectedTeam(tokenData.teamAdminOf[0].id);
+      updateTeam(tokenData.teamAdminOf[0].id); 
+      //fetch all the team convos async; 
+      setTeams(tokenData.teamAdminOf); 
+      fetchConversations(tokenData.teamAdminOf[0].id); 
+      fetchTeams(tokenData.id);
     }
-    getData();
-  }, [tokenFunction],);
+
+    setConvoloading(false);
+  }, []);
+
+
 
   const newChat = () => {
     setSelectedConvo(null);
+    updateConvo(null); 
     updateMessages([[]]);
   }
 
@@ -76,56 +103,13 @@ const SidePanel = ({ messages, updateMessages, tokenFunction }: any) => {
     // fetch the team details ? => and load the convos ? 
     fetchConversations(selectedTeam || 0); 
     setSelectedConvo(null);
-
+    
   }, [selectedTeam])
-
-  async function addNewMessage(msgPayload: any){
-    const newMsgAdded = await axios.post('/api/conversations/addmessage', msgPayload)
-    console.log(msgPayload);
-    return newMsgAdded; 
-}
-
-  async function createNewConversation(payload: any){
-    const newConv = await axios.post('/api/conversations/addnew', payload);
-    // console.log("printing new" , newConv.data.content[0])
-    setSelectedConvo(newConv.data.content[0].id);
-    const msgPayload = {
-      newMsg : messages[messages.length - 1].content,
-      convoId : newConv.data.content[0].id
-    }
-
-    await addNewMessage(msgPayload);
-    return newConv.data.content[0]; 
-  }   
-
-  useEffect(() => {
-    console.log("update this", messages);
-    console.log("selected convo", selectedConvo); 
-    // check if selected convo is null == create new conversation and provide the value 
-    // update the message in table 
-    if(selectedConvo == null && messages.length > 0){
-      const slug = messages[0].content.split(" ").slice(0,2).join(" ")  
-      // console.log(selectedTeam, slug)
-      const payload = {
-        slug: slug,
-        teamId: selectedTeam
-      }
-      console.log(payload)
-      createNewConversation(payload); 
-    } else if (selectedConvo != null) {
-      const msgPayload = {
-        newMsg : messages[messages.length - 1].content,
-        convoId : selectedConvo
-      }
-      addNewMessage(msgPayload); 
-    }
-
-  }, [messages])
 
   return (
     <div className="float-left w-72 pl-1 h-screen bg-gray-800 text-white flex flex-col shadow-lg">
       <div className="flex p-4 items-center justify-start bg-gray-800 my-3 mb-6">
-        <div className="font-bold text-2xl">Hi, {username}</div>
+        <div className="font-bold text-2xl">TeamGPT</div>
       </div>
       <div onClick={newChat} className="flex items-center ml-3 mb-2 w-fit py-2 bg-gray-900 hover:bg-gray-700 hover:text-gray-200 cursor-pointer p-2 rounded-3xl transition duration-75">
         <RiChatNewLine className="ml-1" size={19} />

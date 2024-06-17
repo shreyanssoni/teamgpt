@@ -7,8 +7,12 @@ export async function POST(request: NextRequest){
         const newConvo = await createNewConversation(slug, teamId); 
     
         return NextResponse.json({message: "success", content: newConvo}, {status: 200})
-    } catch (error) {
+    } catch (error:any) {
         console.error(error); 
+        if(error.message == 'Rollback'){
+            console.log('rollback');
+            return NextResponse.json({ message: "team credits are zero!"}, {status: 422}); 
+        }
         return NextResponse.json({ message: "new convo not created", content: "none"}, {status: 500}); 
     }
 }
