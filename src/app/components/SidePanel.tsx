@@ -44,7 +44,9 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
 
   useEffect(()=>{
     setConvoloading(true);
-    setConvoslist((prevList) => [...prevList, convoItem]); 
+    if(convoItem.length > 0){
+      setConvoslist((prevList) => [...prevList, convoItem]); 
+    }
     setConvoloading(false); 
   }, [convoItem])
 
