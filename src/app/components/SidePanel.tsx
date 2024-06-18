@@ -46,7 +46,9 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
     // console.log("convo item changed...,", convoItem)
     setConvoloading(true);
     // if(convoItem.length > 0){
-    setConvoslist((prevList) => [convoItem, ...prevList]); 
+    if(convoItem && convoItem.id){
+      setConvoslist((prevList) => [convoItem, ...prevList]); 
+    }
     // }
     setConvoloading(false); 
   }, [convoItem])
@@ -115,7 +117,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   }, [selectedTeam])
 
   return (
-    <div className="float-left pl-1 h-screen bg-gray-800 text-white flex flex-col shadow-lg">
+    <div style={{ width: '18em' }} className="float-left pl-1 h-screen bg-gray-800 text-white flex flex-col shadow-lg">
       <div className="flex p-4 items-center justify-start bg-gray-800 mb-6">
         <div className="font-bold text-2xl ml-6 ">TeamGPT</div>
       </div>
