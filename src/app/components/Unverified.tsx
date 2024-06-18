@@ -9,7 +9,15 @@ import toast, { Toaster } from "react-hot-toast";
 export default function Unverified({decodedToken}:any) {
   const router = useRouter();
   const logout = async () => {
-    await axios.get("/api/users/logout");
+    const logoutPromise =  axios.get("/api/users/logout");
+    toast.promise(logoutPromise,
+   {
+     loading: 'Saving...',
+     success: <p>Logged Out</p>,
+     error: <p>Could not log out</p>,
+   }
+    )
+    await logoutPromise; 
     router.push("/login");
   };
 

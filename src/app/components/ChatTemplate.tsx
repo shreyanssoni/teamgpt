@@ -34,7 +34,15 @@ export default function ChatTemplate({ tokenFunction }: any) {
   };
 
   const logout = async () => {
-    await axios.get("/api/users/logout");
+    const logoutPromise =  axios.get("/api/users/logout");
+    toast.promise(logoutPromise,
+   {
+     loading: 'Saving...',
+     success: <p>Logged Out</p>,
+     error: <p>Could not log out</p>,
+   }
+    )
+    await logoutPromise; 
     router.push("/login");
   };
 
@@ -308,3 +316,7 @@ export default function ChatTemplate({ tokenFunction }: any) {
     </div>
   );
 }
+function saveSettings(settings: any): Promise<unknown> {
+  throw new Error("Function not implemented.");
+}
+
