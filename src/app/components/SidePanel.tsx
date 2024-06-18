@@ -20,7 +20,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
   const [selectedConvo, setSelectedConvo] = useState(null); 
   const [convoloading, setConvoloading] = useState(false);
-  const creditsRef = useRef<number | string>("loading...");  
+  const creditsRef = useRef<number | string>("no conversation selected");  
 
   async function changeConvo(item: any){
     updateloading(true); 
