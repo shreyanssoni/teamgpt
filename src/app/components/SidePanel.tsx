@@ -43,10 +43,11 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   }
 
   useEffect(()=>{
+    // console.log("convo item changed...,", convoItem)
     setConvoloading(true);
-    if(convoItem.length > 0){
-      setConvoslist((prevList) => [...prevList, convoItem]); 
-    }
+    // if(convoItem.length > 0){
+    setConvoslist((prevList) => [convoItem, ...prevList]); 
+    // }
     setConvoloading(false); 
   }, [convoItem])
 
@@ -61,9 +62,9 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
     if(convos.status  && selectedTeam){
       const retrievedConvos = convos.data.content; 
       if(retrievedConvos.length > 0){
-        setConvoslist(retrievedConvos.sort((a : any, b: any) =>  {
-          new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
-        }));
+        setConvoslist(retrievedConvos.sort((a : any, b: any) =>  
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        ));
       }
       // setConvoslist(retrievedConvos);
     }
