@@ -11,6 +11,7 @@ import styles from "./chat.module.css";
 import toast, { Toaster } from "react-hot-toast";
 import Dialog from "./dialog";
 import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
+import InviteDialog from "./invite";
 
 interface Message {
   id: number;
@@ -30,6 +31,7 @@ export default function ChatTemplate({ tokenFunction }: any) {
   const noCreditsRef = useRef(false);
   const [loading, setLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [inviteOpen, setInviteOpen] = useState(false); 
 
   useEffect(() => {
     const handleResize = () => {
@@ -102,6 +104,7 @@ export default function ChatTemplate({ tokenFunction }: any) {
         await axios.post("/api/jobs/startemailjob", {
           email: tokenFunction.email,
           emailType: "CREDITS",
+          content: tokenFunction.teamAdminOf[0].name
         });
         noCreditsRef.current = true;
       } else {
@@ -227,6 +230,11 @@ export default function ChatTemplate({ tokenFunction }: any) {
     }
   };
 
+  const handleInvite = async () => {
+    setIsOpen(false); 
+    setInviteOpen(true); 
+  }
+
   const updateloading = (value: any) => {
     setLoading(value);
   };
@@ -289,12 +297,17 @@ export default function ChatTemplate({ tokenFunction }: any) {
               team={tokenFunction.teamAdminOf[0]}
               onClose={() => setIsOpen(false)}
               onRemoveMember={handleRemoveMember}
+              handleInvite={handleInvite}
             />
+          )}
+
+          {inviteOpen && (
+            <InviteDialog onClose={() => setInviteOpen(false)} team={tokenFunction.teamAdminOf[0].name} id={tokenFunction.teamAdminOf[0].id}/>
           )}
 
           <span
             onClick={logout}
-            className="absolute cursor-pointer hover:bg-white p-1 text-white hover:text-black rounded-full"
+            className="absolute cursor-pointer hover:bg-red-500 p-1 text-red-500 hover:text-white rounded-full"
           >
             <IoLogOutOutline size={28} />
           </span>

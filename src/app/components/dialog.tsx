@@ -4,7 +4,6 @@ import styles from './chat.module.css'
 import axios from 'axios';
 import { FaPlus } from "react-icons/fa6";
 
-
 interface TeamMember {
   id: number;
   name: string;
@@ -21,9 +20,10 @@ interface DialogProps {
   };
   onClose: () => void;
   onRemoveMember: (id:number, team: number) => void;
+  handleInvite: () => void; 
 }
 
-const Dialog: FC<DialogProps> = ({ user, id, email, team, onClose, onRemoveMember }) => {
+const Dialog: FC<DialogProps> = ({ user, id, email, team, onClose, onRemoveMember, handleInvite }) => {
     
     const teamRef:any = useRef(null);
     const membersRef:any = useRef(null);
@@ -52,10 +52,10 @@ const Dialog: FC<DialogProps> = ({ user, id, email, team, onClose, onRemoveMembe
       
     }
 
-    const shareInvite = async () => {
-        const encodedBody = encodeURIComponent(`You are invited to join ${team.name} by ${user}. Click here: ${process.env.NEXT_DOMAIN}//jointeam?team=${team.name}&${team.id}\n`);
-        window.location.href = `mailto:${email}?subject=${`Invited to join ${team.name}`}&body=${encodedBody}`;
-      }
+    // const shareInvite = async () => {
+    //     const encodedBody = encodeURIComponent(`You are invited to join ${team.name} by ${user}. Click here: ${process.env.NEXT_DOMAIN}//jointeam?team=${team.name}&${team.id}\n`);
+    //     window.location.href = `mailto:${email}?subject=${`Invited to join ${team.name}`}&body=${encodedBody}`;
+    //   }
 
     useEffect(() => {
         getDetails()
@@ -133,7 +133,7 @@ const Dialog: FC<DialogProps> = ({ user, id, email, team, onClose, onRemoveMembe
       )}
       </div>
       <div>
-        <button onClick={shareInvite} className='hover:bg-blue-500 text-blue-600 hover:border-none border border-blue-600 hover:text-white transition' style={{ marginTop: '15px', zIndex: '50', padding: '2px 6px', borderRadius: '12px'}}><FaPlus className='inline mb-1' size={12} /> Invite</button>
+        <button onClick={handleInvite} className='hover:bg-blue-500 text-blue-600 hover:border-none border border-blue-600 hover:text-white transition' style={{ marginTop: '15px', zIndex: '50', padding: '2px 6px', borderRadius: '12px'}}><FaPlus className='inline mb-1' size={12} /> Invite</button>
       </div>
       <div className="flex justify-end mt-6">
         <button onClick={onClose} className="mr-2 px-4 py-2 bg-gray-200 text-gray-700 rounded">

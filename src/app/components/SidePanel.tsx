@@ -174,7 +174,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
             defaultChecked={true}
           >
             {teams.map((item, index) => (
-              <option id={item?.teams?.id} selected={item?.teams?.id == tokenFunction.teamAdminOf[0].id ? true : false} key={item?.teams?.id}>{item?.teams?.name}</option>
+              <option id={item?.teams?.id} selected={item?.teams?.id == tokenFunction.teamAdminOf[0].id ? true : false} key={item?.teams?.id}>{item?.teams?.name} : {item?.teams?.credits}</option>
             ))}
           </select>
         </div>
