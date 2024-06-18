@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   AiFillDashboard,
   AiOutlinePlusSquare,
@@ -19,7 +19,8 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   const [convoslist, setConvoslist] = useState<any[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
   const [selectedConvo, setSelectedConvo] = useState(null); 
-  const [convoloading, setConvoloading] = useState(false); 
+  const [convoloading, setConvoloading] = useState(false);
+  const creditsRef = useRef<number | string>("loading...");  
 
   async function changeConvo(item: any){
     updateloading(true); 
@@ -42,12 +43,25 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
     // console.log("list" , messagesList.data)
   }
 
+  const updateCredits = async (teamId: number | null) => {
+    creditsRef.current = "loading..."
+    try{
+      const newCredits = await axios.post('/api/teams/getcredits', {
+      teamId: teamId
+      });
+      creditsRef.current = newCredits.data.content[0].credits; 
+    } catch (error: any) {
+      console.log("error msg fetching credits", error); 
+    }
+    }
+
   useEffect(()=>{
     // console.log("convo item changed...,", convoItem)
     setConvoloading(true);
     // if(convoItem.length > 0){
     if(convoItem && convoItem.id){
       setConvoslist((prevList) => [convoItem, ...prevList]); 
+      updateCredits(selectedTeam);
     }
     // }
     setConvoloading(false); 
@@ -91,6 +105,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
 
     if(selectedTeam == null){
       setSelectedTeam(tokenData.teamAdminOf[0].id);
+      updateCredits(tokenData.teamAdminOf[0].id); 
       updateTeam(tokenData.teamAdminOf[0].id); 
       //fetch all the team convos async; 
       setTeams(tokenData.teamAdminOf); 
@@ -113,7 +128,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
     // fetch the team details ? => and load the convos ? 
     fetchConversations(selectedTeam || 0); 
     setSelectedConvo(null);
-    
+    // fetchCredits(selectedTeam || 0)
   }, [selectedTeam])
 
   return (
@@ -158,6 +173,9 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
           
         </ul>
       </div>
+      <div className="text-gray-200 ml-3 mt-1 text-sm">
+        Current Credits: <span className="text-gray-400">{creditsRef.current}</span>
+      </div>
       <div className="mt-auto flex flex-col items-center py-4 bg-gray-800 text-gray-400">
         <div className="w-full px-4">
           <label htmlFor="footer-select" className="block text-xs mb-1">
@@ -167,14 +185,15 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
             id="footer-select"
             className="w-full bg-gray-700 border border-gray-600 text-sm rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-gray-500"
             onChange={(e)=> {
-              setSelectedTeam(teams[e.target.options.selectedIndex]?.teams?.id)
+              setSelectedTeam(teams[e.target.options.selectedIndex]?.teams?.id);
               // console.log(teams[0]teams.id
+              updateCredits(teams[e.target.options.selectedIndex]?.teams?.id);
             }}
             defaultValue={tokenFunction.teamAdminOf[0].id}
             defaultChecked={true}
           >
             {teams.map((item, index) => (
-              <option id={item?.teams?.id} selected={item?.teams?.id == tokenFunction.teamAdminOf[0].id ? true : false} key={item?.teams?.id}>{item?.teams?.name} : {item?.teams?.credits}</option>
+              <option id={item?.teams?.id} selected={item?.teams?.id == tokenFunction.teamAdminOf[0].id ? true : false} key={item?.teams?.id}>{item?.teams?.name}</option>
             ))}
           </select>
         </div>

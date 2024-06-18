@@ -177,3 +177,7 @@ export const userverified = async (email: string) => {
 export const userRemoveFromTeam = async (userid: number, teamid: number) => {
     return await db.delete(teamMembers).where(and(eq(teamMembers.userId, userid), eq(teamMembers.teamId, teamid)));
 }
+
+export const getCredits = async (teamId: number) => {
+    return await db.select({credits: teams.credits}).from(teams).where(eq(teams.id, teamId)); 
+}
