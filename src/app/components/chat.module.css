@@ -39,3 +39,38 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  .sidepanel {
+    transition: width 0.6s ease;
+    overflow: hidden;
+    position: relative;
+    float: left;
+    z-index: 50;
+  }
+  
+
+  .sidepanel.collapsed {
+    /* transform: translateX(-100%); */
+    width: 0; 
+    transition: width 0.6s ease;
+  }
+  
+  .sidepanel.open {
+    /* transform: translateX(0); */
+    width: 18em;
+  }
+  
+  .sidebartogglebutton {
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+  }
+/*   
+  @media (max-width: 500px) {
+    .sidebar-toggle-button {
+      display: block;
+    }
+  } */
+  

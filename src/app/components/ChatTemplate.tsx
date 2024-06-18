@@ -10,6 +10,8 @@ import SidePanel from "./SidePanel";
 import styles from "./chat.module.css";
 import toast, { Toaster } from "react-hot-toast";
 import Dialog from "./dialog";
+import { TbLayoutSidebarLeftCollapse } from "react-icons/tb";
+
 
 interface Message {
   id: number;
@@ -28,10 +30,13 @@ export default function ChatTemplate({ tokenFunction }: any) {
   const [isOpen, setIsOpen] = useState(false); 
   const noCreditsRef = useRef(false);
   const [loading, setLoading] = useState(false); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); 
+
 
   const handleMessageChange = (e: any) => {
     setMessage(e.target.value);
   };
+  
 
   const logout = async () => {
     const logoutPromise =  axios.get("/api/users/logout");
@@ -214,18 +219,23 @@ export default function ChatTemplate({ tokenFunction }: any) {
 
   return (
     <div className="flex-1 flex-row">
-      <SidePanel
-        messages={messages}
-        updateMessages={updateMessages}
-        updateConvo={updateConvo}
-        updateTeam={updateTeam}
-        convoItem={convoItem}
-        tokenFunction={tokenFunction}
-        updateloading={updateloading}
-      />
+      <div onClick={() => {setIsSidebarOpen(!isSidebarOpen)}} className={styles.sidebartogglebutton} style={{ position: "absolute", zIndex:52,  top: '20px', left: '12px' }}>
+        <TbLayoutSidebarLeftCollapse className=" cursor-pointer" color="white" size={25}/>
+      </div>
+      <div className={`${styles.sidepanel} ${isSidebarOpen ? styles.open : styles.collapsed}`}>
+        <SidePanel
+          messages={messages}
+          updateMessages={updateMessages}
+          updateConvo={updateConvo}
+          updateTeam={updateTeam}
+          convoItem={convoItem}
+          tokenFunction={tokenFunction}
+          updateloading={updateloading}
+        />
+      </div>
       <Toaster />
       <div className="flex h-screen float text-white">
-        <div className="bg-black w-full h-16 fixed py-4">
+        <div className={`bg-black w-full h-16 fixed py-4 ${isSidebarOpen ? 'ml-0' : 'ml-8' }`}>
           <button
             onClick={() => setIsOpen(true)}
             style={{border: '1px solid white', padding: '4px 8px', borderRadius: '12px', margin: 'auto 20px', boxShadow: '1px 1px 6px 1px rgba(255,255,255,0.4)' }}
@@ -270,7 +280,7 @@ export default function ChatTemplate({ tokenFunction }: any) {
                 </div>
               )}
             </div>
-            <div className="flex items-center w-full justify-center space-x-2 max-w-4xl relative">
+            <div className={`flex items-center w-full justify-center space-x-2 max-w-4xl relative`}>
               <div className="flex flex-1 items-center flex-row justify-center bg-gray-700 text-white rounded-3xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-600">
                 <button className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 transition-colors duration-200">
                   <FiPaperclip size={24} />

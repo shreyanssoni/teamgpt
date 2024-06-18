@@ -114,9 +114,9 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   }, [selectedTeam])
 
   return (
-    <div className="float-left w-72 pl-1 h-screen bg-gray-800 text-white flex flex-col shadow-lg">
-      <div className="flex p-4 items-center justify-start bg-gray-800 my-3 mb-6">
-        <div className="font-bold text-2xl">TeamGPT</div>
+    <div className="float-left pl-1 h-screen bg-gray-800 text-white flex flex-col shadow-lg">
+      <div className="flex p-4 items-center justify-start bg-gray-800 mb-6">
+        <div className="font-bold text-2xl ml-6 ">TeamGPT</div>
       </div>
       <div onClick={newChat} className="flex items-center ml-3 mb-2 w-fit py-2 bg-gray-900 hover:bg-gray-700 hover:text-gray-200 cursor-pointer p-2 rounded-3xl transition duration-75">
         <RiChatNewLine className="ml-1" size={19} />
