@@ -46,7 +46,7 @@ const Dialog: FC<DialogProps> = ({ user, id, email, team, onClose, onRemoveMembe
       teamRef.current = [teams.data.content];
       // console.log(teamRef.current[0])
       membersRef.current = [members.data.content];
-      // console.log("len", membersRef.current[0].length)
+      console.log("len", membersRef.current[0][0])
       setLoading(false); 
       return teams.data.content; 
       
@@ -87,8 +87,10 @@ const Dialog: FC<DialogProps> = ({ user, id, email, team, onClose, onRemoveMembe
             <li key={member.teams.id} className="flex justify-between items-center mt-1">
               {member.teams.name}
               <button onClick={() => {
+                setLoading(true); 
                 onRemoveMember(id, team.id)
                 setRefresh(id)
+                setLoading(false);
               }} className="text-red-500">
                 <FaTrashAlt />
               </button>
@@ -108,12 +110,15 @@ const Dialog: FC<DialogProps> = ({ user, id, email, team, onClose, onRemoveMembe
         )
         } {!loading && (
         <ul className="mt-2 text-black">
-          {membersRef.current[0].length > 0 && membersRef.current.map((item:any) => (
+          {membersRef.current[0].length > 0 && membersRef.current[0].map((item:any) => (
             <li key={item.id} className="flex justify-between items-center mt-1">
               {item.name}
               <button onClick={() => {
-                if(item.id != team.id) onRemoveMember(item.id, team.id)
-                }} className="text-yellow-500">
+                setLoading(true)
+                if(item.id != team.id)
+                  {onRemoveMember(item.id, team.id)
+                  }
+                setLoading(false)}} className="text-yellow-500">
                 {/* <FaSignOutAlt /> */}
                 <span className='text-sm'>Remove</span>
               </button>

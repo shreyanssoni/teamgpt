@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest){
     try {
-        const { userid, teamId } = await request.json(); 
-        const res = await userRemoveFromTeam(userid, teamId);
+        const { userid, teamid } = await request.json(); 
+        const res = await userRemoveFromTeam(userid, teamid);
         // console.log(userid); 
         return NextResponse.json({ content: "user removed" }, {status: 200});
     } catch (error: any) {

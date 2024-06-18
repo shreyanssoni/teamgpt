@@ -49,12 +49,12 @@ export const fetchMessages = async (conversationId: number) => {
     return fetchedMsgs; 
 }
 
-export const fetchMembers = async (teamId: number) => {
-    const fetchedMembers = await db.select({
-        userId: teamMembers.userId
-    })
-    .from(teamMembers)
-    .where(eq(teamMembers.teamId, teamId));
+export const fetchMembers = async (teamid: number) => {
+    const fetchedMembers = await db.select()
+                            .from(teamMembers)
+                            .where(eq(teamMembers.teamId, teamid));
+
+    console.log(teamid)
     
     const userIdArray = fetchedMembers.map(record => record.userId);
     

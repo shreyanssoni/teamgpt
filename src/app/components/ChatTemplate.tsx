@@ -210,10 +210,16 @@ export default function ChatTemplate({ tokenFunction }: any) {
 
   const handleRemoveMember = async (id: number, teamid: number) => {
     try {
-      await axios.post("/api/teams/remove", {
+      const removingPromise = axios.post("/api/teams/remove", {
         userid: id,
         teamid: teamid,
       });
+      toast.promise(removingPromise, {
+          loading: "Loading...",
+          success: <p>Removed!</p>,
+          error: <p>Could not remove</p>,
+      })
+      await removingPromise;
       return "removed";
     } catch (error) {
       console.error("error removing", error);
