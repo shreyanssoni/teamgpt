@@ -13,6 +13,8 @@ import InviteDialog from "./invite";
 import { updateDate } from "@/drizzle/db";
 import { addNewMessage, dbHandlers, updateConversationTime } from "./lib";
 import ChatArea from "./ChatArea";
+import { MdManageAccounts } from "react-icons/md";
+
 
 interface Message {
   id: number;
@@ -240,7 +242,7 @@ export default function ChatTemplate({ tokenFunction }: any) {
           setIsSidebarOpen(!isSidebarOpen);
         }}
         className={styles.sidebartogglebutton}
-        style={{ position: "absolute", zIndex: 52, top: "20px", left: "12px" }}
+        style={{ position: "absolute", zIndex: 52, top: "20px", left: "14px" }}
       >
         <TbLayoutSidebarLeftCollapse
           className=" cursor-pointer"
@@ -266,21 +268,21 @@ export default function ChatTemplate({ tokenFunction }: any) {
       <Toaster />
       <div className="flex h-screen float text-white">
         <div
-          className={`bg-black w-full h-16 fixed py-4 ${
-            isSidebarOpen ? "ml-0" : "ml-8"
-          }`}
+          className={`bg-black absolute right-14 h-16 py-4 `}
         >
           <button
             onClick={() => setIsOpen(true)}
             style={{
-              border: "1px solid white",
-              padding: "4px 8px",
-              borderRadius: "12px",
-              margin: "auto 20px",
+              border: "1px solid #c9dfff",
+              padding: "12px 18px",
+              borderRadius: "40px",
+              margin: "auto 14px",
+              backgroundColor: '#313336',
               boxShadow: "1px 1px 6px 1px rgba(255,255,255,0.4)",
             }}
           >
-            Manage Your Team
+            <MdManageAccounts className="inline mr-1" style={{ paddingBottom: '1px' }} size={26 }/>
+            Manage Team
           </button>
 
           {isOpen && (
@@ -301,9 +303,9 @@ export default function ChatTemplate({ tokenFunction }: any) {
 
           <span
             onClick={logout}
-            className="absolute cursor-pointer hover:bg-red-500 p-1 text-red-500 hover:text-white rounded-full"
+            className="absolute cursor-pointer hover:bg-red-500 p-2 mt-1 text-red-500 hover:text-white rounded-full"
           >
-            <IoLogOutOutline size={28} />
+            <IoLogOutOutline size={28}/>
           </span>
         </div>
         

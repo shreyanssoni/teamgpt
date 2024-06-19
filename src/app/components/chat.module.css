@@ -11,7 +11,7 @@
 
   .untyping {
     /* Set the text content */
-    color: white; 
+    color: rgb(236, 236, 236); 
   }
   
   @keyframes typing {
@@ -47,6 +47,8 @@
     float: left;
     z-index: 50;
     width: 18em;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
   }
   
 
@@ -75,3 +77,27 @@
     }
   } */
   
+  .customselectarrow {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    color: white; /* Ensure text color is white for readability */
+    position: relative;
+  }
+
+  .customselectarrow::after {
+    content: '▼'; /* Custom arrow character */
+    color: rgb(211, 211, 211); /* Color of the custom arrow */
+    font-size: 0.8rem; /* Adjust font size as needed */
+    position: absolute;
+    right: 1rem; /* Position the arrow within the select */
+    top: 53%; /* Center the arrow vertically */
+    transform: translateY(-50%); /* Adjust for vertical centering */
+    pointer-events: none; /* Prevent interaction with the custom arrow */
+  }
+
+  .selectBar {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
