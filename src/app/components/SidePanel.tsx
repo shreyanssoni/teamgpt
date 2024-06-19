@@ -20,7 +20,8 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   const [selectedTeam, setSelectedTeam] = useState<number | null>(null);
   const [selectedConvo, setSelectedConvo] = useState(null); 
   const [convoloading, setConvoloading] = useState(false);
-  const creditsRef = useRef<number | string>("no conversation selected");  
+  // const creditsRef = useRef<number | string>("no conversation selected");  
+  const [credits, setCredits] = useState<number | string>("no conversation selected");  
 
   async function changeConvo(item: any){
     updateloading(true); 
@@ -45,12 +46,14 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
 
   const updateCredits = async (teamId: number | null) => {
     try{
-      creditsRef.current = "loading..."
+      // creditsRef.current = "loading..."
+      setCredits("loading...");
       const newCredits = await axios.post('/api/teams/getcredits', {
           teamId: teamId
       });
-      creditsRef.current = newCredits.data.content[0].credits; 
-      console.log(newCredits.data.content[0].credits, creditsRef.current)
+      // creditsRef.current = newCredits.data.content[0].credits; 
+      setCredits( newCredits.data.content[0].credits);
+      // console.log(newCredits.data.content[0].credits, creditsRef.current)
 
     } catch (error: any) {
       console.log("error msg fetching credits", error); 
@@ -171,8 +174,11 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
           
         </ul>
       </div>
-      <div className="text-gray-200 ml-3 mb-1 text-sm">
+      {/* <div className="text-gray-200 ml-3 mb-1 text-sm">
         Current Credits: <span className="text-gray-400">{creditsRef.current}</span>
+      </div> */}
+      <div className="text-gray-200 ml-3 mb-1 text-sm">
+        Current Credits State: <span className="text-gray-400">{credits}</span>
       </div>
       <div className="mt-auto flex flex-col items-center py-4 bg-gray-800 text-gray-400">
         <div className="w-full px-4">
