@@ -32,6 +32,9 @@ const Details: React.FC = () => {
             if(error.response.status == 402){
               toast.error(`User Already in Team!`);
               router.push('/');
+            } else if (error.response.status) {
+              toast.error("Please Login First.")
+              router.push("/login")
             } else if(error.response.status == 422) {
               toast.error("Team is full.")
             } else {

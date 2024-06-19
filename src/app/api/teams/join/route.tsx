@@ -6,6 +6,9 @@ export async function POST(request: NextRequest){
     const { teamName, teamId } = await request.json();
     const tokenData = getTokenData(request); 
     try {
+        if(tokenData == null || tokenData == ""){
+            return NextResponse.json({ error: "Please login first...!" }, {status: 403})
+        }
         const exists = await checkMemberShip(tokenData.id, teamId)
         if(exists.length > 0){
             return NextResponse.json({ success: true, message: "user already in team!" }, { status: 402 })
