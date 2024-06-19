@@ -44,12 +44,14 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   }
 
   const updateCredits = async (teamId: number | null) => {
-    creditsRef.current = "loading..."
     try{
+      creditsRef.current = "loading..."
       const newCredits = await axios.post('/api/teams/getcredits', {
-      teamId: teamId
+          teamId: teamId
       });
       creditsRef.current = newCredits.data.content[0].credits; 
+      console.log(newCredits.data.content[0].credits, creditsRef.current)
+
     } catch (error: any) {
       console.log("error msg fetching credits", error); 
     }
@@ -72,8 +74,6 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
     const convos = await axios.post('/api/conversations/fetchconvos', {
       teamId: selectedTeam
     })
-
-    // console.log("convos", convos); 
 
     if(convos.status  && selectedTeam){
       const retrievedConvos = convos.data.content; 
@@ -116,8 +116,6 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
     setConvoloading(false);
   }, []);
 
-
-
   const newChat = () => {
     setSelectedConvo(null);
     updateConvo(null); 
@@ -140,7 +138,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
         <RiChatNewLine className="ml-1" size={19} />
         <span className="px-2 pl-3 text-sm">New Chat</span>
       </div>
-      <div className="flex-grow px-2 mt-4">
+      <div className="flex-grow px-2 mt-3">
         <span className="text-sm px-2">Recents</span>
         <ul
           className="mt-2 flex flex-col justify-start py-2 items-center bg-slate-900 h-full rounded-lg overflow-y-scroll"
@@ -173,7 +171,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
           
         </ul>
       </div>
-      <div className="text-gray-200 ml-3 mt-1 text-sm">
+      <div className="text-gray-200 ml-3 mb-1 text-sm">
         Current Credits: <span className="text-gray-400">{creditsRef.current}</span>
       </div>
       <div className="mt-auto flex flex-col items-center py-4 bg-gray-800 text-gray-400">

@@ -181,3 +181,9 @@ export const userRemoveFromTeam = async (userid: number, teamid: number) => {
 export const getCredits = async (teamId: number) => {
     return await db.select({credits: teams.credits}).from(teams).where(eq(teams.id, teamId)); 
 }
+
+export const updateDate = async (convoId: number) => {
+    return await db.update(conversations).set({
+        updatedAt: new Date()
+    }).where(eq(conversations.id, convoId))
+}
