@@ -27,7 +27,6 @@ export default function ChatTemplate({ tokenFunction }: any) {
   // const [messages, setMessages] = useState<Message[]>([]);
   const [selectedTeam, setSelectedTeam] = useState(0);
   const [typing, setTyping] = useState(false);
-  const [convoItem, setConvoItem] = useState([]);
   const convoRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const noCreditsRef = useRef(false);
@@ -35,8 +34,8 @@ export default function ChatTemplate({ tokenFunction }: any) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [inviteOpen, setInviteOpen] = useState(false); 
 
-  const {message, setMessage, messages, setMessages} = useContext(ConversationContext);
-
+  const {token, message, setMessage, setMessages, convoItem, setConvoItem} = useContext(ConversationContext);
+  
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 600) {

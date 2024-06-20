@@ -14,7 +14,7 @@ import { SpinningCircles } from 'react-loading-icons';
 import styles from './chat.module.css'
 import ConversationContext from "../contexts/ConversationsContext";
 
-const SidePanel = ({ updateConvo, updateTeam, convoItem, tokenFunction, updateloading }: any) => {
+const SidePanel = ({ updateConvo, updateTeam, tokenFunction, updateloading }: any) => {
   const [username, setUsername] = useState("");
   const [teams, setTeams] = useState<any[]>([]);
   const [convoslist, setConvoslist] = useState<any[]>([]);
@@ -23,7 +23,7 @@ const SidePanel = ({ updateConvo, updateTeam, convoItem, tokenFunction, updatelo
   const [convoloading, setConvoloading] = useState(false);
   // const creditsRef = useRef<number | string>("no conversation selected");  
   const [credits, setCredits] = useState<number | string>("no conversation selected");  
-  const {setMessages} = useContext(ConversationContext); 
+  const {setMessages, convoItem} = useContext(ConversationContext); 
 
   async function changeConvo(item: any){
     updateloading(true); 
@@ -59,7 +59,6 @@ const SidePanel = ({ updateConvo, updateTeam, convoItem, tokenFunction, updatelo
     }
 
   useEffect(()=>{
-    // console.log("convo item changed...,", convoItem)
     setConvoloading(true);
     // if(convoItem.length > 0){
     if(convoItem && convoItem.id){
@@ -102,7 +101,6 @@ const SidePanel = ({ updateConvo, updateTeam, convoItem, tokenFunction, updatelo
   useEffect(() => { //initial load...
     setConvoloading(true);
     const tokenData = tokenFunction; 
-    setUsername(tokenData.name);
 
     if(selectedTeam == null){
       setSelectedTeam(tokenData.teamAdminOf[0].id);
