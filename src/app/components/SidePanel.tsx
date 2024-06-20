@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   AiFillDashboard,
   AiOutlinePlusSquare,
@@ -12,8 +12,9 @@ import { FaCoins } from "react-icons/fa6";
 import axios from "axios";
 import { SpinningCircles } from 'react-loading-icons';
 import styles from './chat.module.css'
+import ConversationContext from "../contexts/ConversationsContext";
 
-const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoItem, tokenFunction, updateloading }: any) => {
+const SidePanel = ({ updateConvo, updateTeam, convoItem, tokenFunction, updateloading }: any) => {
   const [username, setUsername] = useState("");
   const [teams, setTeams] = useState<any[]>([]);
   const [convoslist, setConvoslist] = useState<any[]>([]);
@@ -22,19 +23,19 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   const [convoloading, setConvoloading] = useState(false);
   // const creditsRef = useRef<number | string>("no conversation selected");  
   const [credits, setCredits] = useState<number | string>("no conversation selected");  
+  const {setMessages} = useContext(ConversationContext); 
 
   async function changeConvo(item: any){
     updateloading(true); 
     if(selectedConvo != item.id){
       updateConvo(item.id); 
-      setSelectedConvo(item.id);
-      // setConvoloading(true); 
-      // updateMessages([]); 
+      setSelectedConvo(item.id); 
       const messagesList = await axios.post('/api/conversations/fetchMessages', {
         convId: item.id
       }); 
-      
-      updateMessages([messagesList.data.content].sort((a:any,b:any) => ( a.createdAt.getTime() - b.createdAt.getTime() )));
+      const sortedArr = [messagesList.data.content].sort((a:any,b:any) => ( a.createdAt.getTime() - b.createdAt.getTime()));
+      // console.log(sortedArr[0])
+      setMessages(sortedArr[0]);
       setConvoloading(false); 
     }
 
@@ -119,7 +120,7 @@ const SidePanel = ({ messages, updateMessages, updateConvo, updateTeam, convoIte
   const newChat = () => {
     setSelectedConvo(null);
     updateConvo(null); 
-    updateMessages([[]]);
+    setMessages([]);
   }
 
   useEffect(() => {

@@ -16,7 +16,7 @@ export async function POST(request: NextRequest){
 async function run(userMessage: string) {
   const model = genAI.getGenerativeModel({ model: "gemini-pro"});
   const result = await model.generateContent(
-    "Respond to the user message in less than 50 words: " + userMessage
+    "INSTRUCTION: You are a chatbot and you have to respond to the following user query:" + userMessage + ". Reply to this as if you are having a conversation with the user. reply concisely, in short always, like an assistant. reply like a human friend."
   );
   return result.response.text(); 
 }

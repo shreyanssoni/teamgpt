@@ -1,9 +1,16 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import ChatBox from "./ChatBox";
 import { FiSend, FiPaperclip } from "react-icons/fi";
 import { IoSend } from "react-icons/io5";
+import ConversationContext from '../contexts/ConversationsContext';
 
-export default function ChatArea({ messages, typing, message, handleMessageChange, sendMessage, noCreditsRef}: any) {
+export default function ChatArea({ typing, sendMessage, noCreditsRef}: any) {
+  const {message, setMessage, messages} = useContext(ConversationContext);
+  
+  const handleMessageChange = (e: any) => {
+    setMessage(e.target.value);
+  }; 
+
   return (
     <div className="m-auto max-w-4xl w-full h-screen pt-8">
     <div className="rounded-lg items-center p-6 flex flex-col h-full">

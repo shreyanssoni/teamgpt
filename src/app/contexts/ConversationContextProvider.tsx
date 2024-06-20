@@ -12,8 +12,8 @@ export const ConversationsContextProvider = ({ children }: any) => {
   const [convos, setConvos] = useState(null);
   const [token, setToken] = useState(null);
   const [convoItem, setConvoItem] = useState([]);
-  const [messages, setMessages] = useState<Message[] | [[]]>([[]]);
-  const [message, setMessage] = useState("")
+  const [messages, setMessages] = useState<Message[] | []>([]);
+  const [message, setMessage] = useState('');
 
   const getCookies = async () => {
     const decodedToken: any = await axios.post("/api/getcookies", {

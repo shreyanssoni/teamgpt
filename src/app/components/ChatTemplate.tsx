@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { RiChatNewLine } from "react-icons/ri";
 import { IoLogOutOutline } from "react-icons/io5";
 import axios from "axios";
@@ -14,6 +14,7 @@ import { updateDate } from "@/drizzle/db";
 import { addNewMessage, dbHandlers, updateConversationTime } from "./lib";
 import ChatArea from "./ChatArea";
 import { MdManageAccounts } from "react-icons/md";
+import ConversationContext from "../contexts/ConversationsContext";
 
 
 interface Message {
@@ -23,11 +24,9 @@ interface Message {
 
 export default function ChatTemplate({ tokenFunction }: any) {
   const router = useRouter();
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
+  // const [messages, setMessages] = useState<Message[]>([]);
   const [selectedTeam, setSelectedTeam] = useState(0);
   const [typing, setTyping] = useState(false);
-  // const [selectedConvo, setSelectedConvo] = useState<any | null>(null);
   const [convoItem, setConvoItem] = useState([]);
   const convoRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -35,6 +34,8 @@ export default function ChatTemplate({ tokenFunction }: any) {
   const [loading, setLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [inviteOpen, setInviteOpen] = useState(false); 
+
+  const {message, setMessage, messages, setMessages} = useContext(ConversationContext);
 
   useEffect(() => {
     const handleResize = () => {
@@ -52,10 +53,6 @@ export default function ChatTemplate({ tokenFunction }: any) {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-  const handleMessageChange = (e: any) => {
-    setMessage(e.target.value);
-  };
 
   const logout = async () => {
     const logoutPromise = axios.get("/api/users/logout");
@@ -109,9 +106,8 @@ export default function ChatTemplate({ tokenFunction }: any) {
     }
   }
 
-  
-
   const sendMessage = async () => {
+    // console.log("message", message)
     if (noCreditsRef.current == true) {
       toast.error("Team Credits are low.");
       return;
@@ -154,13 +150,14 @@ export default function ChatTemplate({ tokenFunction }: any) {
         setMessage("");
         const response = await responsePromise;
         setTyping(false);
-        setMessages((prevMsgs) => [
+        setMessages((prevMsgs: Message[]) => [
           ...prevMsgs,
           {
             id: Math.floor(Math.random() * 100),
             content: response.data.content,
           },
         ]);
+        console.log(response.data.content)
         const msgPayload = {
           newMsg: response.data.content,
           convoId: convoRef.current,
@@ -170,13 +167,15 @@ export default function ChatTemplate({ tokenFunction }: any) {
         }
       } catch (error: any) {
         console.error("error", error);
-        setMessages((prevMsgs) => [
+
+        setMessages((prevMsgs: Message[]) => [
           ...prevMsgs,
           {
             id: Math.floor(Math.random() * 100),
             content: "Technical difficulties...try later.",
           },
         ]);
+
       }
     }
   };
@@ -256,8 +255,6 @@ export default function ChatTemplate({ tokenFunction }: any) {
         }`}
       >
         <SidePanel
-          messages={messages}
-          updateMessages={updateMessages}
           updateConvo={updateConvo}
           updateTeam={updateTeam}
           convoItem={convoItem}
@@ -303,14 +300,14 @@ export default function ChatTemplate({ tokenFunction }: any) {
 
           <span
             onClick={logout}
-            className="absolute cursor-pointer hover:bg-red-500 p-2 mt-1 text-red-500 hover:text-white rounded-full"
+            className="absolute cursor-pointer hover:bg-red-500 p-2 mt-1 hover:text-white rounded-full"
           >
             <IoLogOutOutline size={28}/>
           </span>
         </div>
         
         {!loading && (
-          <ChatArea messages={messages} typing={typing} message={message} handleMessageChange={handleMessageChange} sendMessage={sendMessage} noCreditsRef={noCreditsRef} />
+          <ChatArea typing={typing} sendMessage={sendMessage} noCreditsRef={noCreditsRef} />
         )}
         {loading && (
           <div className="flex justify-center items-center w-full">

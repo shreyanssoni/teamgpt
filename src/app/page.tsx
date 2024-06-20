@@ -16,6 +16,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SpinningCircles } from "react-loading-icons";
 import styles from './components/chat.module.css'; 
+import ConversationContext from "./contexts/ConversationsContext";
+import { ConversationsContextProvider } from "./contexts/ConversationContextProvider";
 
 export default function Home() {
   const router = useRouter();
@@ -70,9 +72,9 @@ export default function Home() {
         <NotTeamFound />;
       } else {
         return (
-          <>
+          <ConversationsContextProvider>
             <ChatTemplate tokenFunction={token} />
-          </>
+          </ConversationsContextProvider>
         );
       }
     }
